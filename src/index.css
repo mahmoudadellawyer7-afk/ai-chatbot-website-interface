@@ -1,0 +1,30 @@
+@import url('https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700;800;900&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Public Sans", ui-sans-serif, system-ui, sans-serif;
+  --color-primary: #0072bc;
+  --color-background-dark: #ffffff;
+  --color-card-dark: #ffffff;
+  --color-border-dark: #e2e8f0;
+}
+
+.glass {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.glow-subtle {
+  box-shadow: 0 10px 40px -10px var(--color-primary, #0072bc);
+}
+
+.circular-progress {
+  background: conic-gradient(var(--color-primary, #0072bc) 94%, #e2e8f0 0);
+}
+
+@layer base {
+  body {
+    @apply bg-background-dark text-slate-900 font-sans;
+  }
+}
