@@ -150,6 +150,46 @@ async function startServer() {
     });
   }
 
+  // Google Drive OAuth
+  app.get('/api/auth/google-drive/url', (req, res) => {
+    const redirectUri = `${process.env.APP_URL || 'http://localhost:3000'}/auth/google-drive/callback`;
+    const params = new URLSearchParams({
+      client_id: process.env.GOOGLE_CLIENT_ID || 'dummy-client-id',
+      redirect_uri: redirectUri,
+      response_type: 'code',
+      scope: 'https://www.googleapis.com/auth/drive.readonly',
+      access_type: 'offline',
+      prompt: 'consent'
+    });
+    const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`;
+    res.json({ url: authUrl });
+  });
+
+  app.get('/auth/google-drive/callback', async (req, res) => {
+    const { code } = req.query;
+    // In a real app, you would exchange the code for tokens here
+    // For this demo, we'll just simulate success and send the message back
+    
+    res.send(`
+      <html>
+        <body>
+          <script>
+            if (window.opener) {
+              window.opener.postMessage({ 
+                type: 'GOOGLE_DRIVE_AUTH_SUCCESS', 
+                driveUrl: 'https://drive.google.com/drive/u/0/my-drive' // Simulated connected URL
+              }, '*');
+              window.close();
+            } else {
+              window.location.href = '/';
+            }
+          </script>
+          <p>Google Drive connected successfully. This window should close automatically.</p>
+        </body>
+      </html>
+    `);
+  });
+
   app.listen(PORT, "0.0.0.0", () => {
     console.log(`Server running on http://localhost:${PORT}`);
   });

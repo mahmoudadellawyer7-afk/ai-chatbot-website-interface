@@ -44,7 +44,9 @@ import {
   Zap,
   LogOut,
   Bot,
-  ArrowLeft
+  ArrowLeft,
+  Sun,
+  Moon
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
@@ -61,32 +63,17 @@ import {
   Bar
 } from 'recharts';
 
-const Logo = ({ className = "h-10", minimal = false, src }: { className?: string, minimal?: boolean, src?: string }) => {
-  if (src) {
-    return <img src={src} alt="Logo" className={className} referrerPolicy="no-referrer" />;
-  }
-
-  if (minimal) {
-    return (
-      <div className={`flex items-center gap-2 ${className}`}>
-        <div className="size-8 bg-primary flex items-center justify-center rounded-lg shadow-lg shadow-primary/20">
-          <Bolt className="text-white size-5 fill-current" />
-        </div>
-        <div className="flex flex-col -space-y-1">
-          <span className="text-lg font-black tracking-tighter text-slate-900">IECC</span>
-          <span className="text-[8px] font-bold text-primary uppercase tracking-widest leading-none">Nile University</span>
-        </div>
-      </div>
-    );
-  }
-
+const Logo = ({ className = "h-10", minimal = false }: { className?: string, minimal?: boolean }) => {
   return (
-    <img 
-      src="https://iecc.nu.edu.eg/sites/default/files/iecc-logo.png" 
-      alt="Nile University Logo" 
-      className={className}
-      referrerPolicy="no-referrer"
-    />
+    <div className={`flex items-center gap-2 ${className}`}>
+      <div className="size-8 bg-primary flex items-center justify-center rounded-lg shadow-lg shadow-primary/20">
+        <Bolt className="text-white size-5 fill-current" />
+      </div>
+      <div className="flex flex-col -space-y-1">
+        <span className="text-lg font-black tracking-tighter text-slate-900 dark:text-white">IECC</span>
+        <span className="text-[8px] font-bold text-primary uppercase tracking-widest leading-none">Assistant</span>
+      </div>
+    </div>
   );
 };
 
@@ -223,8 +210,8 @@ const ChatWidget = ({ isOpen, onClose, botName }: { isOpen: boolean, onClose: ()
         >
           <div className="p-4 bg-primary text-white flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="size-8 bg-white/20 rounded-lg flex items-center justify-center">
-                <Bolt className="size-5 fill-current" />
+              <div className="size-8 bg-white/20 rounded-lg flex items-center justify-center overflow-hidden">
+                <Logo className="size-6" />
               </div>
               <div>
                 <p className="font-bold text-sm">{botName} Preview</p>
@@ -330,14 +317,21 @@ const ToastContainer = ({ toasts }: { toasts: any[] }) => (
   </div>
 );
 
-const LandingView = ({ onLogin, onSignup }: { onLogin: () => void, onSignup: () => void }) => (
+const LandingView = ({ onLogin, onSignup, theme, setTheme }: { onLogin: () => void, onSignup: () => void, theme: 'light' | 'dark', setTheme: (t: 'light' | 'dark') => void }) => (
   <div className="relative min-h-screen w-full flex flex-col bg-background-dark overflow-hidden">
     <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[800px] bg-gradient-to-b from-primary/10 to-transparent pointer-events-none opacity-50"></div>
     
     <header className="relative z-10 flex items-center justify-between px-6 lg:px-20 py-8">
       <Logo className="h-14" />
       <div className="flex items-center gap-4">
-        <button onClick={onLogin} className="text-sm font-bold text-slate-500 hover:text-slate-900 transition-colors px-4 py-2">Login</button>
+        <button 
+          onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
+          className="p-2 rounded-xl bg-white/10 border border-slate-200 dark:border-slate-700 text-slate-500 hover:text-slate-900 dark:hover:text-white transition-all"
+          title="Toggle Theme"
+        >
+          {theme === 'light' ? <Moon className="size-5" /> : <Sun className="size-5" />}
+        </button>
+        <button onClick={onLogin} className="text-sm font-bold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors px-4 py-2">Login</button>
         <button onClick={onSignup} className="bg-primary hover:opacity-90 text-white text-sm font-bold px-6 py-2.5 rounded-xl transition-all shadow-lg shadow-primary/20">Sign Up</button>
       </div>
     </header>
@@ -352,13 +346,13 @@ const LandingView = ({ onLogin, onSignup }: { onLogin: () => void, onSignup: () 
           <Zap className="size-3 fill-current" />
           The Future of Customer Support
         </div>
-        <h1 className="text-6xl lg:text-8xl font-black leading-[0.9] tracking-tighter text-slate-900">
-          NILE <br/>
+        <h1 className="text-6xl lg:text-8xl font-black leading-[0.9] tracking-tighter text-slate-900 dark:text-white">
+          <span className="text-primary">IECC</span> <br/>
           <span className="text-primary">ASSISTANT</span> <br/>
-          PLATFORM
+          <span className="text-primary">PLATFORM</span>
         </h1>
-        <p className="text-xl text-slate-500 max-w-2xl mx-auto font-medium">
-          Empower Nile University with intelligent, brand-aware AI agents. Deploy across all channels in under 5 minutes.
+        <p className="text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto font-medium">
+          Empower IECC University with intelligent, brand-aware AI agents. Deploy across all channels in under 5 minutes.
         </p>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-8">
           <button onClick={onSignup} className="w-full sm:w-auto bg-primary hover:opacity-90 text-white py-5 px-12 rounded-2xl font-black text-xl shadow-2xl shadow-primary/40 transition-all transform hover:scale-105 active:scale-95">
@@ -370,7 +364,7 @@ const LandingView = ({ onLogin, onSignup }: { onLogin: () => void, onSignup: () 
   </div>
 );
 
-const AuthView = ({ mode, onSwitch, onSuccess, addToast, onClose }: { mode: 'login' | 'signup', onSwitch: () => void, onSuccess: (user: any) => void, addToast: (m: string, t?: 'success' | 'info') => void, onClose: () => void }) => {
+const AuthView = ({ mode, onSwitch, onSuccess, addToast, onClose, theme, setTheme }: { mode: 'login' | 'signup', onSwitch: () => void, onSuccess: (user: any) => void, addToast: (m: string, t?: 'success' | 'info') => void, onClose: () => void, theme: 'light' | 'dark', setTheme: (t: 'light' | 'dark') => void }) => {
   const [formData, setFormData] = useState({ name: '', email: '', password: '', confirmPassword: '' });
   const [loading, setLoading] = useState(false);
 
@@ -416,6 +410,13 @@ const AuthView = ({ mode, onSwitch, onSuccess, addToast, onClose }: { mode: 'log
         className="w-full max-w-md bg-card-dark border border-border-dark p-8 rounded-3xl shadow-2xl relative z-10"
       >
         <button 
+          onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
+          className="absolute top-6 right-16 p-2 text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-all"
+          title="Toggle Theme"
+        >
+          {theme === 'light' ? <Moon className="size-5" /> : <Sun className="size-5" />}
+        </button>
+        <button 
           onClick={onClose}
           className="absolute top-6 right-6 p-2 text-slate-400 hover:text-slate-900 hover:bg-slate-100 rounded-full transition-all"
         >
@@ -423,11 +424,8 @@ const AuthView = ({ mode, onSwitch, onSuccess, addToast, onClose }: { mode: 'log
         </button>
 
         <div className="text-center mb-8">
-          <div className="size-12 bg-primary flex items-center justify-center rounded-2xl shadow-lg shadow-primary/20 mx-auto mb-4">
-            <Bolt className="text-white size-8 fill-current" />
-          </div>
-          <h2 className="text-3xl font-black tracking-tight text-slate-900">{mode === 'signup' ? 'Create Account' : 'Welcome Back'}</h2>
-          <p className="text-slate-500 mt-2">{mode === 'signup' ? 'Join Nile Assistant and start building today.' : 'Enter your credentials to access your dashboard.'}</p>
+          <h2 className="text-3xl font-black tracking-tight text-slate-900 dark:text-white">{mode === 'signup' ? 'Create Account' : 'Welcome Back'}</h2>
+          <p className="text-slate-600 dark:text-slate-400 mt-2">{mode === 'signup' ? 'Join IECC Assistant and start building today.' : 'Enter your credentials to access your dashboard.'}</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -486,26 +484,48 @@ const AuthView = ({ mode, onSwitch, onSuccess, addToast, onClose }: { mode: 'log
   );
 };
 
-const OnboardingStep1 = ({ data, onNext, onBack, primaryColor, setPrimaryColor }: any) => {
-  const [startupName, setStartupName] = useState(data.startupName || '');
+const OnboardingStep1 = ({ data, onNext, onBack, primaryColor, setPrimaryColor, theme, setTheme }: any) => {
+  const [companyName, setCompanyName] = useState(data.companyName || '');
+  const [customerSegments, setCustomerSegments] = useState(data.customerSegments || '');
+  const [resourcesDescription, setResourcesDescription] = useState(data.resourcesDescription || '');
+  const [industry, setIndustry] = useState(data.industry || '');
+  const [offering, setOffering] = useState(data.offering || '');
 
-  const isStepValid = startupName && primaryColor;
+  const isStepValid = companyName && customerSegments && resourcesDescription && industry && offering && primaryColor;
 
   return (
-    <div className="w-full max-w-3xl space-y-8">
+    <div className="w-full max-w-3xl space-y-8 relative">
+      <button 
+        onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
+        className="absolute -top-12 right-0 p-2 text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-all"
+        title="Toggle Theme"
+      >
+        {theme === 'light' ? <Moon className="size-5" /> : <Sun className="size-5" />}
+      </button>
+
       <div className="text-center space-y-4 mb-12">
-        <h1 className="text-4xl font-black tracking-tight text-slate-900">Step 1: Bot Identity</h1>
-        <p className="text-slate-500">Define how your AI assistant looks.</p>
+        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-black uppercase tracking-widest mb-4">
+          Step 1 of 2
+        </div>
+        <h1 className="text-4xl font-black tracking-tight text-slate-900 dark:text-white">Step 1: Bot Identity</h1>
+        <p className="text-slate-500 dark:text-slate-400">Define how your AI assistant looks and who it serves.</p>
       </div>
 
       <section className="glass p-8 rounded-3xl glow-subtle space-y-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div className="space-y-6">
             <InputField 
-              label="Startup Name" 
-              placeholder="e.g. My Assistant" 
-              value={startupName}
-              onChange={(e: any) => setStartupName(e.target.value)}
+              label="Company Name" 
+              placeholder="e.g. My Company" 
+              value={companyName}
+              onChange={(e: any) => setCompanyName(e.target.value)}
+              required 
+            />
+            <InputField 
+              label="Industry/Sector/Domain" 
+              placeholder="e.g. Education, E-commerce" 
+              value={industry}
+              onChange={(e: any) => setIndustry(e.target.value)}
               required 
             />
           </div>
@@ -530,6 +550,37 @@ const OnboardingStep1 = ({ data, onNext, onBack, primaryColor, setPrimaryColor }
             </div>
           </div>
         </div>
+
+        <div className="space-y-6">
+          <InputField 
+            label="Customer Segments" 
+            placeholder="e.g. Students, Faculty, Parents" 
+            value={customerSegments}
+            onChange={(e: any) => setCustomerSegments(e.target.value)}
+            required 
+          />
+          <div className="space-y-2">
+            <label className="text-sm font-semibold text-slate-600">
+              Briefly describe the resources to use based on customer segments <span className="text-primary">*</span>
+            </label>
+            <textarea 
+              className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder:text-slate-400 focus:border-primary outline-none transition-all min-h-[100px]"
+              placeholder="Describe how the bot should interact with each segment..."
+              value={resourcesDescription}
+              onChange={(e) => setResourcesDescription(e.target.value)}
+              required
+            />
+          </div>
+          <div className="space-y-2">
+            <InputField 
+              label="Offering" 
+              placeholder="What are you offering?" 
+              value={offering}
+              onChange={(e: any) => setOffering(e.target.value)}
+              required 
+            />
+          </div>
+        </div>
       </section>
 
       <div className="flex flex-col md:flex-row items-center justify-center gap-4 pt-8">
@@ -541,7 +592,7 @@ const OnboardingStep1 = ({ data, onNext, onBack, primaryColor, setPrimaryColor }
           Back
         </button>
         <button 
-          onClick={() => onNext({ startupName, primaryColor })}
+          onClick={() => onNext({ companyName, customerSegments, resourcesDescription, industry, offering, primaryColor })}
           disabled={!isStepValid}
           className="w-full md:w-auto min-w-[280px] bg-primary text-white py-4 px-12 rounded-2xl font-black text-xl shadow-xl shadow-primary/20 transition-all transform hover:scale-105 active:scale-95 flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
         >
@@ -553,15 +604,58 @@ const OnboardingStep1 = ({ data, onNext, onBack, primaryColor, setPrimaryColor }
   );
 };
 
-const OnboardingStep2 = ({ data, onComplete, onBack, addToast }: { data: any, onComplete: (d: any) => void, onBack: () => void, addToast: (m: string, t?: 'success' | 'info') => void }) => {
+const GoogleDriveConnectButton = ({ connected, onConnect, onDisconnect }: any) => {
+  return (
+    <div className="space-y-2">
+      <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Google Drive Integration (Optional)</label>
+      <button 
+        type="button"
+        onClick={connected ? onDisconnect : onConnect}
+        className={`w-full h-12 border rounded-xl px-4 flex items-center gap-3 transition-all ${connected ? 'bg-emerald-50 border-emerald-200 text-emerald-700' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50 shadow-sm'}`}
+      >
+        <div className="size-6 flex items-center justify-center">
+          <svg viewBox="0 0 24 24" className="size-5">
+            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/>
+            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+          </svg>
+        </div>
+        <span className="font-bold text-sm">{connected ? 'Google Drive Connected' : 'Connect Google Drive'}</span>
+        {connected && <CheckCircle2 className="size-4 ml-auto text-emerald-500" />}
+      </button>
+    </div>
+  );
+};
+
+const OnboardingStep2 = ({ data, onComplete, onBack, addToast, theme, setTheme }: { data: any, onComplete: (d: any) => void, onBack: () => void, addToast: (m: string, t?: 'success' | 'info') => void, theme: 'light' | 'dark', setTheme: (t: 'light' | 'dark') => void }) => {
   const [formData, setFormData] = useState({
-    websiteUrl: '',
-    googleDriveUrl: '',
-    googleSheetUrl: '',
-    backoffSeconds: 30,
-    ignoredMessages: '',
-    facebookConnected: false
+    websiteUrl: data.websiteUrl || '',
+    googleDriveUrl: data.googleDriveUrl || '',
+    googleSheetUrl: data.googleSheetUrl || '',
+    backoffSeconds: data.backoffSeconds || 30,
+    ignoredMessages: data.ignoredMessages || '',
+    facebookConnected: data.facebookConnected || false
   });
+
+  useEffect(() => {
+    if (data.googleDriveUrl) {
+      setFormData(prev => ({ ...prev, googleDriveUrl: data.googleDriveUrl }));
+    }
+  }, [data.googleDriveUrl]);
+
+  const handleGoogleDriveConnect = async () => {
+    try {
+      const response = await fetch('/api/auth/google-drive/url');
+      const { url } = await response.json();
+      const authWindow = window.open(url, 'google_drive_auth', 'width=600,height=700');
+      if (!authWindow) {
+        addToast('Please allow popups to connect Google Drive', 'info');
+      }
+    } catch (error) {
+      addToast('Failed to start Google Drive connection', 'info');
+    }
+  };
 
   const handleComplete = () => {
     onComplete(formData);
@@ -570,10 +664,21 @@ const OnboardingStep2 = ({ data, onComplete, onBack, addToast }: { data: any, on
   const isStepValid = formData.websiteUrl && formData.googleSheetUrl && formData.backoffSeconds;
 
   return (
-    <div className="w-full max-w-3xl space-y-8">
+    <div className="w-full max-w-3xl space-y-8 relative">
+      <button 
+        onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
+        className="absolute -top-12 right-0 p-2 text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-all"
+        title="Toggle Theme"
+      >
+        {theme === 'light' ? <Moon className="size-5" /> : <Sun className="size-5" />}
+      </button>
+
       <div className="text-center space-y-4 mb-12">
-        <h1 className="text-4xl font-black tracking-tight text-slate-900">Step 2: Integrations</h1>
-        <p className="text-slate-500">Connect your data sources.</p>
+        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-black uppercase tracking-widest mb-4">
+          Step 2 of 2
+        </div>
+        <h1 className="text-4xl font-black tracking-tight text-slate-900 dark:text-white">Step 2: Integrations</h1>
+        <p className="text-slate-500 dark:text-slate-400">Connect your data sources.</p>
       </div>
 
       <div className="space-y-6">
@@ -591,11 +696,10 @@ const OnboardingStep2 = ({ data, onComplete, onBack, addToast }: { data: any, on
               required
             />
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <InputField 
-                label="Google Drive (Optional)" 
-                placeholder="https://drive.google.com/..." 
-                value={formData.googleDriveUrl}
-                onChange={(e: any) => setFormData({ ...formData, googleDriveUrl: e.target.value })}
+              <GoogleDriveConnectButton 
+                connected={!!formData.googleDriveUrl} 
+                onConnect={handleGoogleDriveConnect}
+                onDisconnect={() => setFormData({ ...formData, googleDriveUrl: '' })}
               />
               <div className="space-y-2">
                 <InputField 
@@ -1028,7 +1132,7 @@ const KnowledgeBaseView = ({ sources, onAdd, onDelete, addToast }: { sources: an
   );
 };
 
-const IntegrationsView = ({ addToast, botName, primaryColor }: { addToast: (m: string) => void, botName: string, primaryColor: string }) => {
+const IntegrationsView = ({ addToast, botName, primaryColor, onboardingData }: { addToast: (m: string) => void, botName: string, primaryColor: string, onboardingData: any }) => {
   const integrations = [
     { name: 'Website Embed', icon: Globe, desc: 'Add IECC Chatbot to your website with a simple script.', status: 'Get Code', color: 'text-primary' },
     { name: 'Slack', icon: Slack, desc: 'Deploy your bot to any Slack channel.', status: 'Connected', color: 'text-purple-500' },
@@ -1050,14 +1154,14 @@ const IntegrationsView = ({ addToast, botName, primaryColor }: { addToast: (m: s
 {`<script src="https://iecc-chatbot.io/widget.js"></script>
 <script>
   Assistant.init({
-    startup: "${botName}",
+    company: "${onboardingData?.companyName || botName}",
     color: "${primaryColor}"
   });
 </script>`}
             </pre>
             <button 
               onClick={() => {
-                navigator.clipboard.writeText(`<script src="https://iecc-chatbot.io/widget.js"></script>\n<script>\n  Assistant.init({\n    startup: "${botName}",\n    color: "${primaryColor}"\n  });\n</script>`);
+                navigator.clipboard.writeText(`<script src="https://iecc-chatbot.io/widget.js"></script>\n<script>\n  Assistant.init({\n    company: "${onboardingData?.companyName || botName}",\n    color: "${primaryColor}"\n  });\n</script>`);
                 addToast('Embed code copied!');
               }}
               className="absolute top-4 right-4 p-2 bg-white border border-slate-200 hover:bg-slate-50 rounded-lg transition-colors text-slate-500"
@@ -1156,6 +1260,19 @@ const SettingsView = ({
     }
   }, [onboardingData]);
 
+  const handleGoogleDriveConnect = async () => {
+    try {
+      const response = await fetch('/api/auth/google-drive/url');
+      const { url } = await response.json();
+      const authWindow = window.open(url, 'google_drive_auth', 'width=600,height=700');
+      if (!authWindow) {
+        addToast('Please allow popups to connect Google Drive', 'info');
+      }
+    } catch (error) {
+      addToast('Failed to start Google Drive connection', 'info');
+    }
+  };
+
   return (
     <div className="space-y-8 max-w-4xl">
       <div>
@@ -1222,12 +1339,14 @@ const SettingsView = ({
             />
             
             <div className="md:col-span-2">
-              <InputField 
-                label="Google Drive Integration" 
-                placeholder="https://drive.google.com/..." 
-                value={settingsData.googleDriveUrl}
-                onChange={(e: any) => setSettingsData({ ...settingsData, googleDriveUrl: e.target.value })}
+              <GoogleDriveConnectButton 
+                connected={!!settingsData.googleDriveUrl} 
+                onConnect={handleGoogleDriveConnect}
+                onDisconnect={() => setSettingsData({ ...settingsData, googleDriveUrl: '' })}
               />
+              {settingsData.googleDriveUrl && (
+                <p className="text-[10px] text-slate-400 font-mono mt-1 break-all">{settingsData.googleDriveUrl}</p>
+              )}
             </div>
           </div>
           <div className="flex justify-end">
@@ -1249,10 +1368,10 @@ const SettingsView = ({
 const SidebarItem = ({ icon: Icon, label, active, collapsed, onClick }: any) => (
   <button 
     onClick={onClick}
-    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all group relative ${active ? 'bg-primary/10 text-primary font-bold' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'}`}
+    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all group relative ${active ? 'bg-primary/10 text-primary font-bold' : 'text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white'}`}
     title={collapsed ? label : ''}
   >
-    <Icon className={`size-5 shrink-0 ${active ? 'text-primary' : 'text-slate-400 group-hover:text-slate-600'}`} />
+    <Icon className={`size-5 shrink-0 ${active ? 'text-primary' : 'text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300'}`} />
     {!collapsed && <span className="text-sm truncate">{label}</span>}
     {collapsed && active && (
       <motion.div 
@@ -1276,7 +1395,9 @@ const DashboardView = ({
   onExportReport,
   onboardingData,
   user,
-  setOnboardingData
+  setOnboardingData,
+  theme,
+  setTheme
 }: { 
   onLogout: () => void, 
   primaryColor: string, 
@@ -1290,9 +1411,11 @@ const DashboardView = ({
   onExportReport: () => void,
   onboardingData: any,
   user: any,
-  setOnboardingData: (d: any) => void
+  setOnboardingData: (d: any) => void,
+  theme: 'light' | 'dark',
+  setTheme: (t: 'light' | 'dark') => void
 }) => {
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'analytics' | 'settings'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'analytics' | 'integrations' | 'settings'>('dashboard');
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -1309,6 +1432,7 @@ const DashboardView = ({
         />
       );
       case 'analytics': return <AnalyticsView primaryColor={primaryColor} addToast={addToast} onExport={onExportReport} />;
+      case 'integrations': return <IntegrationsView addToast={addToast} botName={botName} primaryColor={primaryColor} onboardingData={onboardingData} />;
       case 'settings': return (
         <SettingsView 
           botName={botName} 
@@ -1362,26 +1486,26 @@ const DashboardView = ({
       </AnimatePresence>
 
       {/* Side Navigation */}
-      <aside className={`fixed lg:relative z-50 h-full bg-white border-r border-slate-200 flex flex-col transition-all duration-300 ease-in-out ${isSidebarCollapsed ? 'w-20' : 'w-64'} ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}>
+      <aside className={`fixed lg:relative z-50 h-full bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex flex-col transition-all duration-300 ease-in-out ${isSidebarCollapsed ? 'w-20' : 'w-64'} ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}>
         <div className={`p-6 flex items-center ${isSidebarCollapsed ? 'justify-center' : 'justify-between'}`}>
           {!isSidebarCollapsed && (
             <div className="flex items-center gap-2">
-              <div className="size-8 bg-primary flex items-center justify-center rounded-lg shadow-lg shadow-primary/20">
-                <Bolt className="text-white size-5 fill-current" />
+              <div className="size-8 bg-primary flex items-center justify-center rounded-lg shadow-lg shadow-primary/20 overflow-hidden">
+                <Logo className="size-6" />
               </div>
-              <span className="text-lg font-black tracking-tighter text-slate-900 truncate max-w-[140px]">
+              <span className="text-lg font-black tracking-tighter text-slate-900 dark:text-white truncate max-w-[140px]">
                 {onboardingData?.startup_name || onboardingData?.startupName || "Assistant"}
               </span>
             </div>
           )}
           {isSidebarCollapsed && (
             <div className="size-10 bg-primary flex items-center justify-center rounded-xl shadow-lg shadow-primary/20 overflow-hidden">
-              <Bolt className="text-white size-6 fill-current" />
+              <Logo className="size-8" />
             </div>
           )}
           <button 
             onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
-            className="hidden lg:flex p-1.5 hover:bg-slate-100 rounded-lg text-slate-400 transition-colors"
+            className="hidden lg:flex p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg text-slate-400 dark:text-slate-500 transition-colors"
           >
             <motion.div animate={{ rotate: isSidebarCollapsed ? 180 : 0 }}>
               <ArrowLeft className="size-4" />
@@ -1392,7 +1516,7 @@ const DashboardView = ({
         <nav className="flex-1 px-4 space-y-2 mt-4 overflow-y-auto">
           <SidebarItem 
             icon={LayoutDashboard} 
-            label={onboardingData?.startup_name || onboardingData?.startupName || "Dashboard"} 
+            label={onboardingData?.companyName || onboardingData?.startup_name || onboardingData?.startupName || "Dashboard"} 
             active={activeTab === 'dashboard'} 
             collapsed={isSidebarCollapsed}
             onClick={() => { setActiveTab('dashboard'); setIsMobileMenuOpen(false); }} 
@@ -1405,11 +1529,11 @@ const DashboardView = ({
             onClick={() => { setActiveTab('analytics'); setIsMobileMenuOpen(false); }} 
           />
           <SidebarItem 
-            icon={Settings} 
-            label="Settings" 
-            active={activeTab === 'settings'} 
+            icon={Share2} 
+            label="Integrations" 
+            active={activeTab === 'integrations'} 
             collapsed={isSidebarCollapsed}
-            onClick={() => { setActiveTab('settings'); setIsMobileMenuOpen(false); }} 
+            onClick={() => { setActiveTab('integrations'); setIsMobileMenuOpen(false); }} 
           />
         </nav>
 
@@ -1426,21 +1550,21 @@ const DashboardView = ({
 
       {/* Main Content */}
       <main className="flex-1 overflow-y-auto bg-background-dark flex flex-col">
-        <header className="h-16 border-b border-primary/20 flex items-center justify-between px-4 lg:px-8 sticky top-0 bg-primary backdrop-blur-md z-30">
+        <header className="h-16 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between px-4 lg:px-8 sticky top-0 bg-white dark:bg-slate-900 backdrop-blur-md z-30">
           <div className="flex items-center gap-4">
             <button 
               onClick={() => setIsMobileMenuOpen(true)}
-              className="lg:hidden p-2 text-white hover:bg-white/10 rounded-lg"
+              className="lg:hidden p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg"
             >
               <LayoutDashboard className="size-6" />
             </button>
             <div className="flex items-center gap-3">
-              <div className="size-8 bg-white/20 flex items-center justify-center rounded-lg">
-                <Bolt className="text-white size-5 fill-current" />
+              <div className="size-8 bg-primary flex items-center justify-center rounded-lg shadow-lg shadow-primary/20">
+                <Logo className="size-6" />
               </div>
               <button 
                 onClick={() => setActiveTab('dashboard')}
-                className="text-sm font-bold text-white hover:text-white/80 transition-colors hidden sm:block"
+                className="text-sm font-bold text-slate-900 dark:text-white hover:text-primary transition-colors hidden sm:block"
               >
                 {botName} Dashboard
               </button>
@@ -1448,32 +1572,34 @@ const DashboardView = ({
           </div>
           <div className="flex items-center gap-2 lg:gap-4">
             <div className="relative hidden md:block">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-white/60 size-4" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 size-4" />
               <input 
-                className="pl-9 pr-4 py-1.5 bg-white/10 border border-white/20 rounded-lg text-sm focus:ring-1 focus:ring-white/40 w-48 lg:w-64 outline-none text-white placeholder:text-white/40" 
+                className="pl-9 pr-4 py-1.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:ring-1 focus:ring-primary w-48 lg:w-64 outline-none text-slate-900 dark:text-white placeholder:text-slate-400" 
                 placeholder="Search..." 
                 type="text"
               />
             </div>
             <div className="relative">
               <button 
+                onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
+                className="p-2 transition-colors rounded-lg text-slate-500 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"
+                title="Toggle Theme"
+              >
+                {theme === 'light' ? <Moon className="size-5" /> : <Sun className="size-5" />}
+              </button>
+            </div>
+            <div className="relative">
+              <button 
                 onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
-                className={`p-2 transition-colors rounded-lg ${isNotificationsOpen ? 'bg-white/20 text-white' : 'text-white/80 hover:text-white hover:bg-white/10'}`}
+                className={`p-2 transition-colors rounded-lg ${isNotificationsOpen ? 'bg-primary/10 text-primary' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800'}`}
               >
                 <Bell className="size-5" />
               </button>
               <NotificationsPanel isOpen={isNotificationsOpen} onClose={() => setIsNotificationsOpen(false)} />
             </div>
-            <button 
-              onClick={() => setActiveTab('settings')}
-              className={`p-2 transition-colors rounded-lg text-white/80 hover:text-white hover:bg-white/10 ${activeTab === 'settings' ? 'bg-white/20 text-white' : ''}`}
-              title="Settings"
-            >
-              <Settings className="size-5" />
-            </button>
             <div 
               onClick={() => setActiveTab('settings')}
-              className={`size-8 rounded-full bg-white/20 border border-white/40 flex items-center justify-center text-[10px] font-bold text-white uppercase cursor-pointer transition-all ${activeTab === 'settings' ? 'ring-2 ring-white ring-offset-2 ring-offset-primary' : 'hover:bg-white/30'}`}
+              className={`size-8 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center text-[10px] font-bold text-primary uppercase cursor-pointer transition-all ${activeTab === 'settings' ? 'ring-2 ring-primary ring-offset-2 dark:ring-offset-slate-900' : 'hover:bg-primary/20'}`}
             >
               {user.name?.charAt(0) || 'A'}
             </div>
@@ -1532,6 +1658,12 @@ export default function App() {
   const [view, setView] = useState<'landing' | 'login' | 'signup' | 'onboarding-step1' | 'onboarding-step2' | 'dashboard'>('landing');
   const [user, setUser] = useState<any>(null);
   const [primaryColor, setPrimaryColor] = useState('#0072bc');
+  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
+    if (typeof window !== 'undefined') {
+      return (localStorage.getItem('theme') as 'light' | 'dark') || 'light';
+    }
+    return 'light';
+  });
   const [toasts, setToasts] = useState<{id: number, message: string, type: 'success' | 'info'}[]>([]);
   
   const [onboardingData, setOnboardingData] = useState<any>({});
@@ -1563,10 +1695,26 @@ export default function App() {
   };
 
   useEffect(() => {
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+    localStorage.setItem('theme', theme);
+  }, [theme]);
+
+  useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
       if (event.data?.type === 'OAUTH_AUTH_SUCCESS') {
         handleAuthSuccess(event.data.user);
         addToast('Successfully authenticated with Google!');
+      } else if (event.data?.type === 'GOOGLE_DRIVE_AUTH_SUCCESS') {
+        setOnboardingData((prev: any) => ({ 
+          ...prev, 
+          google_drive_url: event.data.driveUrl,
+          googleDriveUrl: event.data.driveUrl 
+        }));
+        addToast('Google Drive connected successfully!');
       }
     };
     window.addEventListener('message', handleMessage);
@@ -1575,7 +1723,7 @@ export default function App() {
 
   const handleOnboardingStep1 = (data: any) => {
     setOnboardingData({ ...onboardingData, ...data });
-    setBotName(data.startupName);
+    setBotName(data.companyName);
     setPrimaryColor(data.primaryColor);
     setView('onboarding-step2');
   };
@@ -1591,7 +1739,7 @@ export default function App() {
       if (response.ok) {
         setOnboardingData(finalData);
         setView('dashboard');
-        addToast('Onboarding complete! Welcome to Nile Assistant.');
+        addToast('Onboarding complete! Welcome to IECC Assistant.');
       }
     } catch (error) {
       addToast('Failed to save onboarding data', 'info');
@@ -1609,11 +1757,11 @@ export default function App() {
   const renderView = () => {
     switch (view) {
       case 'landing':
-        return <LandingView onLogin={() => setView('login')} onSignup={() => setView('signup')} />;
+        return <LandingView onLogin={() => setView('login')} onSignup={() => setView('signup')} theme={theme} setTheme={setTheme} />;
       case 'login':
-        return <AuthView mode="login" onSwitch={() => setView('signup')} onSuccess={handleAuthSuccess} addToast={addToast} onClose={() => setView('landing')} />;
+        return <AuthView mode="login" onSwitch={() => setView('signup')} onSuccess={handleAuthSuccess} addToast={addToast} onClose={() => setView('landing')} theme={theme} setTheme={setTheme} />;
       case 'signup':
-        return <AuthView mode="signup" onSwitch={() => setView('login')} onSuccess={handleAuthSuccess} addToast={addToast} onClose={() => setView('landing')} />;
+        return <AuthView mode="signup" onSwitch={() => setView('login')} onSuccess={handleAuthSuccess} addToast={addToast} onClose={() => setView('landing')} theme={theme} setTheme={setTheme} />;
       case 'onboarding-step1':
         return (
           <div className="min-h-screen bg-background-dark flex flex-col items-center py-20 px-6">
@@ -1623,6 +1771,8 @@ export default function App() {
               onBack={() => setView('signup')}
               primaryColor={primaryColor} 
               setPrimaryColor={setPrimaryColor} 
+              theme={theme}
+              setTheme={setTheme}
             />
           </div>
         );
@@ -1634,6 +1784,8 @@ export default function App() {
               onComplete={handleOnboardingComplete} 
               onBack={() => setView('onboarding-step1')}
               addToast={addToast} 
+              theme={theme}
+              setTheme={setTheme}
             />
           </div>
         );
@@ -1660,13 +1812,17 @@ export default function App() {
             onboardingData={onboardingData}
             user={user}
             setOnboardingData={setOnboardingData}
+            theme={theme}
+            setTheme={setTheme}
           />
         );
+      default:
+        return <LandingView onLogin={() => setView('login')} onSignup={() => setView('signup')} theme={theme} setTheme={setTheme} />;
     }
   };
 
   return (
-    <div style={{ '--color-primary': primaryColor } as React.CSSProperties}>
+    <div className="font-sans text-slate-900 bg-background-dark min-h-screen transition-colors duration-300" style={{ '--color-primary': '#0072bc' } as React.CSSProperties}>
       <ToastContainer toasts={toasts} />
       <AnimatePresence mode="wait">
         <motion.div
